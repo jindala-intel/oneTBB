@@ -113,6 +113,9 @@ inline suspend_point_type::suspend_point_type(arena* a, size_t stack_size, task_
 inline task_dispatcher::task_dispatcher(arena* a) {
     m_execute_data_ext.context = a->my_default_ctx;
     m_execute_data_ext.task_disp = this;
+
+    itt_domain = __itt_domain_create(L"task_dispatcher Domain");
+    itt_handle = __itt_string_handle_create(L".No Tasks!");
 }
 
 inline bool task_dispatcher::can_steal() {
@@ -228,7 +231,9 @@ d1::task* task_dispatcher::receive_or_steal_task(
             break; // Stealing success, end of stealing attempt
         }
         // Nothing to do, pause a little.
+        __itt_task_begin(itt_domain, __itt_null, __itt_null, itt_handle);
         waiter.pause(slot);
+        __itt_task_end(itt_domain);
     } // end of nonlocal task retrieval loop
 
     __TBB_ASSERT(is_alive(a.my_guard), nullptr);

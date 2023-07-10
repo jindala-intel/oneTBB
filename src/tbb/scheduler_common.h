@@ -426,6 +426,8 @@ struct suspend_point_type {
 
 class alignas (max_nfs_size) task_dispatcher {
 public:
+    __itt_domain* itt_domain;
+    __itt_string_handle* itt_handle;
     // TODO: reconsider low level design to better organize dependencies and files.
     friend class thread_data;
     friend class arena_slot;
